@@ -8,9 +8,18 @@ const cors = require('cors')
 const helmet = require('helmet')
 const { NODE_ENV } = require('./config')
 const app = express()
+const router = require('./router');
 
 const server = http.createServer(app)
 const io = socketio(server)
+
+io.on('connection', (socket) => {
+  console.log('Online!');
+
+  socket.on('disconnect', () => {
+    console.log('Offline!');
+  })
+});
 
 server.listen(PORT, () => console.log(`Server is running on http://localhost:${PORT}`));
 
@@ -33,8 +42,10 @@ const morganOption = (NODE_ENV === 'production')
           res.status(500).json(response)
         })
 
-// app.use(morgan(morganOption))
-// app.use(helmet())
-// app.use(cors())
+app.use(morgan(morganOption))
+app.use(helmet())
+app.use(cors())
+
+app.use(router);
 
 module.exports = app
