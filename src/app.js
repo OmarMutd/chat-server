@@ -16,6 +16,10 @@ const io = socketio(server)
 io.on('connection', (socket) => {
   console.log('Online!');
 
+  socket.on('join', ({name, room }) => {
+    console.log(name, room)
+  });
+
   socket.on('disconnect', () => {
     console.log('Offline!');
   })
