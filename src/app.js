@@ -10,13 +10,13 @@ const { NODE_ENV } = require('./config')
 const app = express()
 const router = require('./router');
 
-const {addUser, getUser, getUsersInRoom, removeUser } = require('./users.js')
+const {addUser, getUser, getUsersInRoom, removeUser } = require('./users-helpers.js')
 
 const server = http.createServer(app)
 const io = socketio(server)
 
 io.on('connection', (socket) => {
-  socket.on('join', ({name, room }) => {
+  socket.on('join', ({name, room }, callback) => {
    const { error, user } = addUser({ id: socket.id, name, room});
 
    if(error) return callback(error);
