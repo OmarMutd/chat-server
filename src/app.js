@@ -10,14 +10,20 @@ const { NODE_ENV } = require('./config')
 const app = express()
 const router = require('./router');
 
+const {addUser, getUser, getUsersInRoom, removeUser } = require('./users.js')
+
 const server = http.createServer(app)
 const io = socketio(server)
 
 io.on('connection', (socket) => {
-  console.log('Online!');
-
   socket.on('join', ({name, room }) => {
-    console.log(name, room)
+   const { error, user } = addUser({ id: socket.id, name, room});
+
+   if(error) return callback(error);
+
+   socket.emit('message', { user: 'admin', text: `Hello ${user.name} you are now chatting in ${user.room}`});
+
+   socket.join(user.room);
   });
 
   socket.on('disconnect', () => {
