@@ -33,7 +33,7 @@ io.on('connection', (socket) => {
   socket.on('sendMessage', (message, callback) => {
     const user = getUser(socket.id);
 
-    io.to(user.room).getMaxListeners('message', {user: user.name, text: message});
+    io.to(user.room).emit('message', {user: user.name, text: message});
 
     callback();
   } );
