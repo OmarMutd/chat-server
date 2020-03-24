@@ -15,16 +15,23 @@ const {addUser, getUser, getUsersInRoom, removeUser } = require('./users-helpers
 const server = http.createServer(app)
 const io = socketio(server)
 
-io.on('connection', (socket) => {
+app.use(helmet())
+app.use(cors())
+
+app.use(router);
+
+io.on('connect', (socket) => {
   socket.on('join', ({name, room }, callback) => {
    const { error, user } = addUser({ id: socket.id, name, room});
 
    if(error) return callback(error);
 
+
+   socket.join(user.room);
    socket.emit('message', { user: 'admin', text: `Hello ${user.name} you are now chatting in ${user.room}`});
    socket.broadcast.to(user.room).emit('message', { user: 'admin', text: `${user.name}, has joined!`});
 
-   socket.join(user.room);
+   
 
    io.to(user.room).emit('roomData', {room: user.room, users: getUsersInRoom(user.room)})
 
@@ -36,7 +43,7 @@ io.on('connection', (socket) => {
     const user = getUser(socket.id);
 
     io.to(user.room).emit('message', {user: user.name, text: message});
-    io.to(user.room).emit('roomData', {room: user.room, users: getUsersInRoom(user.room)});
+    // io.to(user.room).emit('roomData', {room: user.room, users: getUsersInRoom(user.room)});
 
     callback();
   } );
@@ -45,6 +52,8 @@ io.on('connection', (socket) => {
     const user = removeUser(socket.id);
     if (user){
       io.to(user.room).emit('message', { user:'admin', text: `Goodbye, ${user.name}!`})
+      io.to(user.room).emit('roomData', { room: user.room, users: getUsersInRoom(user.room)});
+
     }
   })
 
@@ -71,10 +80,5 @@ const morganOption = (NODE_ENV === 'production')
           res.status(500).json(response)
         })
 
-app.use(morgan(morganOption))
-app.use(helmet())
-app.use(cors())
-
-app.use(router);
-
+        app.use(morgan(morganOption))
 module.exports = app
