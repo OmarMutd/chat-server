@@ -28,8 +28,8 @@ io.on('connect', (socket) => {
 
 
    socket.join(user.room);
-   socket.emit('message', { user: 'admin', text: `Hello ${user.name} you are now chatting in ${user.room}`});
-   socket.broadcast.to(user.room).emit('message', { user: 'admin', text: `${user.name}, has joined!`});
+   socket.emit('message', { user: 'Chat Bot', text: `Hello ${user.name} you are now chatting in ${user.room}`});
+   socket.broadcast.to(user.room).emit('message', { user: 'Chat Bot', text: `${user.name}, has joined!`});
 
    
 
@@ -51,7 +51,7 @@ io.on('connect', (socket) => {
   socket.on('disconnect', () => {
     const user = removeUser(socket.id);
     if (user){
-      io.to(user.room).emit('message', { user:'admin', text: `Goodbye, ${user.name}!`})
+      io.to(user.room).emit('message', { user:'Chat Bot', text: `Goodbye, ${user.name}!`})
       io.to(user.room).emit('roomData', { room: user.room, users: getUsersInRoom(user.room)});
 
     }
