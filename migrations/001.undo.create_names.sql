@@ -1,1 +1,1 @@
-DROP TABLE IF EXISTS names;
+DROP TABLE IF EXISTS usernames;
