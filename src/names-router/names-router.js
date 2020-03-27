@@ -1,5 +1,6 @@
 const path = require('path')
 const logger = require('../logger')
+
 const express = require('express')
 const xss = require('xss')
 const NamesService = require('./names-service')
@@ -9,11 +10,11 @@ const bodyParser = express.json()
 const serializeName = name => ({
     id: name.id,
     password: xss(name.password),
-    // date_joined: user.date_joined
+    // date_joined: name.date_joined
   })
 
   serializeName = (name) => {
-    return name.map(this.serializeUser)
+    return name.map(this.serializeName)
   }
 
 
@@ -23,19 +24,19 @@ const serializeName = name => ({
   .get((req, res, next) => {
     const db = req.app.get('db')
     NamesService.getname(db)
-    .then(user => {
-      res.json(user)
+    .then(name => {
+      res.json(name)
     })
     .catch(next)
   })
 
   .post(bodyParser, (req, res, next) => {
     const { name, password } = req.body
-    const newUser = { name, password }
+    const newName = { name, password }
     const db = req.app.get('db')
 
     for (const field of ['name', 'password']) {
-      if (!newUser[field]) {
+      if (!newName[field]) {
         logger.error(`${field} is required`)
         return res.status(400).send({
           error: { message: `'${field}' is required` }
@@ -43,4 +44,13 @@ const serializeName = name => ({
     }
 }
 
-})
+NamesService.insertName(db, newName)
+      .then(name => {
+        logger.info(`Name with id ${name.id} created.`)
+        res
+          .status(201)
+          .location(path.posix.join(req.originalUrl, `${name.id}`))
+          .json(serializeName(name))
+      })
+      .catch(next)
+  })
