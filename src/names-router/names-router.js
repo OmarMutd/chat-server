@@ -10,13 +10,13 @@ const bodyParser = express.json()
 
 const serializeName = name => ({
     id: name.id,
-    password: xss(name.password),
+    password: xss(name.password)
     // date_joined: name.date_joined
   })
 
-  serializeName = (name) => {
-    return name.map(this.serializeName)
-  }
+  // serializeName = (name) => {
+  //   return name.map(this.serializeName)
+  // }
 
 
   namesRouter

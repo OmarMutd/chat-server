@@ -9,6 +9,7 @@ const helmet = require('helmet')
 const { NODE_ENV } = require('./config')
 const app = express()
 const router = require('./router');
+const namesRouter = require('./names-router/names-router')
 
 const {addUser, getUser, getUsersInRoom, removeUser } = require('./users-helpers.js')
 
@@ -19,6 +20,8 @@ app.use(helmet())
 app.use(cors())
 
 app.use(router);
+
+app.use('/api/names', namesRouter)
 
 io.on('connect', (socket) => {
   socket.on('join', ({name, room }, callback) => {
