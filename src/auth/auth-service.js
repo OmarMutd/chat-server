@@ -2,9 +2,9 @@ const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken')
 const config = require('../config')
 const AuthService = {
-    getUserWithUserName(table, user_name) {
-        return table('thingful_users')
-            .where({ user_name })
+    getUserWithUserName(table, name) {
+        return table('usernames')
+            .where({ name })
             .first()
     },
       comparePasswords(password, hash) {

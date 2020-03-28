@@ -34,25 +34,23 @@ namesRouter
 
                 return NamesService.hashPassword(password)
                     .then(hashedPassword => {
-                        const newUser = {
-                            user_name,
+                        const newName = {
+                            name,
                             password: hashedPassword,
                             // date_created: 'now()',
                             }
                 
                     return NamesService.insertUser(
                     req.app.get('db'),
-                    newUser
+                    newName
                     )
-                    .then(user => {
+                    .then(name => {
                         res
                         .status(201)
-                        .location(path.posix.join(req.originalUrl, `/${user.id}`))
-                        .json(NamesService.serializeUser(user))
+                        .location(path.posix.join(req.originalUrl, `/${name.id}`))
+                        .json(NamesService.serializeName(name))
                     })
                 })
-                    
-    res.send('ok')
     
   })
   .catch(next)

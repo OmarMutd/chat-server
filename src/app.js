@@ -10,16 +10,27 @@ const { NODE_ENV } = require('./config')
 const app = express()
 const router = require('./router');
 const namesRouter = require('./names/names-router')
+const knex = require('knex')
+
 
 const {addUser, getUser, getUsersInRoom, removeUser } = require('./users-helpers.js')
 
 const server = http.createServer(app)
 const io = socketio(server)
 
+const {DB_URL } = require('./config')
+
+const db = knex({
+  client: 'pg',
+  connection: DB_URL,
+})
+
+app.set('db', db)
+
 app.use(helmet())
 app.use(cors())
 
-app.use(router);
+
 
 app.use(namesRouter)
 
