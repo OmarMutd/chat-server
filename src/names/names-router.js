@@ -6,7 +6,7 @@ const xss = require('xss')
 const NamesService = require('./names-service')
 
 const namesRouter = express.Router()
-const bodyParser = express.json()
+const jsonParser = express.json()
 
 const serializeName = name => ({
     id: name.id,
@@ -14,24 +14,21 @@ const serializeName = name => ({
     // date_joined: name.date_joined
   })
 
-  // serializeName = (name) => {
-  //   return name.map(this.serializeName)
-  // }
 
 
   namesRouter
   .route('/')
 
   .get((req, res, next) => {
-    const db = req.app.get('db')
-    NamesService.getname(db)
+    const knexInstance = req.app.get('db')
+    NamesService.getById(db)
     .then(name => {
-      res.json(name)
+      res.json(name.map(serializeName))
     })
     .catch(next)
   })
 
-  .post(bodyParser, (req, res, next) => {
+  .post(jsonParser, (req, res, next) => {
     const { name, password } = req.body
     const newName = { name, password }
     const db = req.app.get('db')
@@ -57,7 +54,7 @@ NamesService.insertName(db, newName)
   })
 
   namesRouter
-  .route('/:name_id')
+  .route('/names/:name_id')
 
   .all((req, res, next) => {
     const { name_id } = req.params
@@ -91,7 +88,7 @@ NamesService.insertName(db, newName)
       .catch(next)
     })
 
-  .patch(bodyParser, (req, res, next) => {
+  .patch(jsonParser, (req, res, next) => {
     const { password, name } = req.body
     const newName = { name, password }
 
