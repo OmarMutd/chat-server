@@ -1,50 +1,49 @@
-'use strict';
+const REGEX_UPPER_LOWER_NUMBER_SPECIAL = /(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#\$%\^&])[\S]+/
 const bcrypt = require('bcryptjs')
-const css = require('xss');
+const xss = require('xss');
 
 const NamesService = {
-  async validateFields(db, user) {
-    const result = {};
+  hasUserWithUserName(db, name) {
+      return db('usernames')
+      .where({ name })
+      .first()
+      .then(name => !!name)
+  },
+  insertUser(db, newName) {
+      return db
+      .insert(newName)
+      .into('usernames')
+      .returning('*')
+      .then(([name]) => name)
+  },
 
-    for (const [key,value] of Object.entries(user)) {
-      if (value.startsWith(' ') || value.endsWith(' ')) {
-        result.error = `${key} cannot start or end with spaces`;
+  validatePassword(password) {
+    if (password.length < 8) {
+      return 'Password must be longer than 8 characters'
+    }
+    if (password.length > 72) {
+      return 'Password must be less than 72 characters'
+    }
+  if (password.startsWith(' ') || password.endsWith(' ')) {
+      return 'Password must not start or end with empty spaces'
+  }
+  if (!REGEX_UPPER_LOWER_NUMBER_SPECIAL.test(password)) {
+      return 'Password must contain 1 upper case, lower case, number and special character'
       }
-    }
-    const foundUser = await db('usersnames').where({user_name: user.user_name}).select('*');
-    if (foundUser.length) {
-      result.error = 'user name already exists';
-    }
-    if (user.password.length < 8 || user.password.length > 72) {
-      result.error = 'password must be between 8 and 72 characters';
-
-    }
-    const regex = /(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#\$%\^&])[\S]+/;
-    if (!regex.test(user.password)) {
-      result.error = 'password must contain at least one of each: upper case, lower case, number and special character';
-
-    }
-    return result;
+      return null
   },
-
-  hashPassword(password){
-    return bcrypt.hash(password)
-
-  },
-  sanitize(user) {
-    const filtered = {};
-    for (const [key,value] of Object.entries(user)) {
-      filtered[key] = xss(value);
-    }
-    return filtered;
-  },
-  insert(db, user) {
-    return db('usernames')
-    .insert(user)
-    .returning('*')
-    .then(rows => rows[0]);
-  },
-
-};
   
-  module.exports = NamesService
+  hashPassword(password) {
+      return bcrypt.hash(password, 12)
+      },
+
+  serializeName(name) {
+      return {
+      id: name.id,
+      name: xss(name.name),
+      // date_created: new Date(name.date_created),
+      }
+  },
+}
+
+module.exports = NamesService
