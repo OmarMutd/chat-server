@@ -7,6 +7,10 @@ const NamesService = {
     return knex.select('*').from('usernames')
   },
 
+  getById(knex, id) {
+    return knex.from('usernames').select('*').where('id', id).first()
+  },
+
   hasUserWithUserName(db, name) {
       return db('usernames')
       .where({ name })
@@ -19,6 +23,12 @@ const NamesService = {
       .into('usernames')
       .returning('*')
       .then(([name]) => name)
+  },
+
+  deleteName(knex, id) {
+    return knex('usernames')
+      .where({ id })
+      .delete()
   },
 
   validatePassword(password) {
