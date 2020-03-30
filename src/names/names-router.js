@@ -69,5 +69,39 @@ namesRouter
   })
   .catch(next)
 })
+
+namesRouter
+  .route('/names/:name_id')
+  .all((req, res, next) => {
+    const { name_id } = req.params
+    NamesService.getById(req.app.get('db'), name_id)
+      .then(name => {
+        if (!name) {
+          logger.error(`Name with id ${name_id} not found.`)
+          return res.status(404).json({
+            error: { message: `Name Not Found` }
+          })
+        }
+        res.name = name
+        next()
+      })
+      .catch(next)
+  })
+  .get((req, res) => {
+    res.json(serializeName(res.name))
+  })
+  .delete((req, res, next) => {
+    const { name_id } = req.params
+    NamesService.deleteName(
+      req.app.get('db'),
+      name_id
+    )
+      .then(numRowsAffected => {
+        logger.info(`Name with id ${name_id} deleted.`)
+        res.status(204).end()
+      })
+      .catch(next)
+  })
+
   
   module.exports = namesRouter;
