@@ -30,7 +30,7 @@ app.set('db', db)
 app.use(helmet())
 app.use(cors())
 
-
+app.use(router); // server online router
 
 app.use(namesRouter)
 

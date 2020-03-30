@@ -8,9 +8,22 @@ const NamesService = require('./names-service')
 const namesRouter = express.Router()
 const jsonBodyParser = express.json()
 
+const serializeName = name => ({
+    id: name.id,
+    name: xss(name.name),
+  })
+
 
 namesRouter
-  .post('/', jsonBodyParser, (req, res, next) => {
+.route('/names')
+.get((req, res, next) => {
+    NamesService.getAllNames(req.app.get('db'))
+      .then(names => {
+        res.json(names.map(serializeName))
+      })
+      .catch(next)
+  })
+  .post(jsonBodyParser, (req, res, next) => {
     const { password, name } = req.body
 
     for (const field of ['name', 'password'])
@@ -51,6 +64,7 @@ namesRouter
                         .json(NamesService.serializeName(name))
                     })
                 })
+
     
   })
   .catch(next)

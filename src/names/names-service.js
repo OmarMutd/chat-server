@@ -3,6 +3,10 @@ const bcrypt = require('bcryptjs')
 const xss = require('xss');
 
 const NamesService = {
+  getAllNames(knex) {
+    return knex.select('*').from('usernames')
+  },
+
   hasUserWithUserName(db, name) {
       return db('usernames')
       .where({ name })
