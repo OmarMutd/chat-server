@@ -11,6 +11,7 @@ const jsonBodyParser = express.json()
 const serializeName = name => ({
     id: name.id,
     name: xss(name.name),
+    // password: xss(name.password)
   })
 
 
@@ -89,6 +90,7 @@ namesRouter
   })
   .get((req, res) => {
     res.json(serializeName(res.name))
+    // res.json(serializeName(res.password))
   })
   .delete((req, res, next) => {
     const { name_id } = req.params
@@ -102,6 +104,7 @@ namesRouter
       })
       .catch(next)
   })
+  .patch
 
   
   module.exports = namesRouter;
