@@ -107,7 +107,6 @@ namesRouter
     const { name_id } = req.params;
     NamesService.changePassword(
       req.app.get('db'),
-      password,
       newpassword,
       name_id,
     )
