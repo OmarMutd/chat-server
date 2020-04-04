@@ -105,7 +105,7 @@ namesRouter
     const {password} = req.params
     NamesService.changePassword(
       req.app.get('db'),
-      password
+      password,
     )
     .then(passwords => {
       res.json(passwords.map(serializeName));
