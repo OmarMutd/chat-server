@@ -101,15 +101,20 @@ namesRouter
       })
       .catch(next);
   })
-  .patch((req,res) => {
-    const {password} = req.params
+  .patch(jsonBodyParser, (req,res, next) => {
+    const {name, password} = req.body
+    const newpassword = {name, password}
+    const { name_id } = req.params;
     NamesService.changePassword(
       req.app.get('db'),
       password,
+      newpassword,
+      name_id,
     )
-    .then(passwords => {
-      res.json(passwords.map(serializeName));
-  });
+    .then(() => {
+      res.status(204)
+    })
+     .catch(next)
 });
 
   

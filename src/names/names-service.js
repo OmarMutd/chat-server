@@ -31,11 +31,10 @@ const NamesService = {
       .del();
   },
 
-  changePassword(knex, id, password) {
+  changePassword(knex, id, newpassword) {
     return knex('usernames')
     .where({id})
-    .update([password])
-    .then(([password]) => password);
+    .update(newpassword)
   },
 
   validatePassword(password) {
