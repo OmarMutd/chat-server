@@ -11,9 +11,10 @@ const jsonBodyParser = express.json();
 const serializeName = name => ({
     id: name.id,
     name: xss(name.name),
-    // password: xss(name.password)
+    password: xss(name.password)
   });
-
+  
+namesRouter.use(jsonBodyParser)
 
 namesRouter
 .route('/')
@@ -68,6 +69,21 @@ namesRouter
   .catch(next);
 })
 
+.delete((req, res, next) => {
+  // console.log(name_id)
+  // console.log('Hello')
+  const { name } = req.body
+  NamesService.deleteName(
+    req.app.get('db'),
+    name
+  )
+    .then((numRowsAffected) => {
+      logger.info(`Name with id ${name} deleted.`);
+      res.status(204).end();
+    })
+    .catch(next);
+})
+
 namesRouter
   .route('/:name_id')
   .all((req, res, next) => {
@@ -89,21 +105,9 @@ namesRouter
     res.json(serializeName(res.name));
     // res.json(serializeName(res.password))
   })
-  .delete((req, res, next) => {
-    const { name_id } = req.params;
-    NamesService.deleteName(
-      req.app.get('db'),
-      name_id
-    )
-      .then((numRowsAffected) => {
-        logger.info(`Name with id ${name_id} deleted.`);
-        res.status(204).end();
-      })
-      .catch(next);
-  })
   .patch(jsonBodyParser, (req,res, next) => {
     const { name, password} = req.body
-    const newpassword = {name, password}
+    const newpassword = password
     const { name_id } = req.params;
     NamesService.changePassword(
       req.app.get('db'),
@@ -112,7 +116,7 @@ namesRouter
       name_id,
     )
     .then(() => {
-      res.status(204)
+      res.sendStatus(204)
     })
      .catch(next)
 });

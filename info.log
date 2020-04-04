@@ -1,3 +1,6 @@
 {"message":"Name with id 1 deleted.","level":"info"}
 {"message":"Name with id 1 not found.","level":"error"}
 {"message":"Name with id 2 deleted.","level":"info"}
+{"message":"Name with id 5 deleted.","level":"info"}
+{"message":"Name with id Testuser1 deleted.","level":"info"}
+{"message":"Name with id Hello deleted.","level":"info"}

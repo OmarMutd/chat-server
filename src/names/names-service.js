@@ -25,20 +25,17 @@ const NamesService = {
       .then(([name]) => name);
   },
 
-  deleteName(knex, id) {
+  deleteName(knex, name) {
     return knex('usernames')
-      .where({ id })
+      .where({ name })
       .del();
   },
 
-  changePassword(knex, id, newpassword) {
-    console.log("NEWPASSWORD:", newpassword);
+  changePassword(knex,password,newpassword, id)   {
+    // console.log("NEWPASSWORD:", newpassword);
     return knex('usernames')
     .where({id})
-    .update({
-      'name': newpassword.name,
-      'password': newpassword.password
-    })
+    .update({ password: newpassword })
   },
 
   validatePassword(password) {

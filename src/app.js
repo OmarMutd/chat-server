@@ -13,12 +13,12 @@ const namesRouter = require('./names/names-router');
 const knex = require('knex');
 
 
-const {addUser, getUser, getUsersInRoom, removeUser } = require('./users-helpers.js');
+const { addUser, getUser, getUsersInRoom, removeUser } = require('./users-helpers.js');
 
 const server = http.createServer(app);
 const io = socketio(server);
 
-const {DB_URL } = require('./config');
+const { DB_URL } = require('./config');
 
 const db = knex({
   client: 'pg',
@@ -36,31 +36,32 @@ app.use(cors());
 
 // app.use(router);  // server online router
 
-app.use('/api/names',namesRouter)
+app.use('/api/names', namesRouter)
 
 io.on('connect', (socket) => {
   socket.on('join', ({ name, room }, callback) => {
-   const { error, user } = addUser({ id: socket.id, name, room });
+    const { error, user } = addUser({ id: socket.id, name, room });
 
-   if (error) return callback(error);
+    if (error) return callback(error);
 
 
-   socket.join(user.room);
-   socket.emit('message', {
-      user: 'Chat Bot', 
-      text: `Hello ${user.name} you are now chatting in ${user.room}. `});
-   socket.broadcast
-   .to(user.room)
-   .emit('message', { user: 'Chat Bot', text: `${user.name}, has joined!` });
+    socket.join(user.room);
+    socket.emit('message', {
+      user: 'Chat Bot',
+      text: `Hello ${user.name} you are now chatting in ${user.room}. `
+    });
+    socket.broadcast
+      .to(user.room)
+      .emit('message', { user: 'Chat Bot', text: `${user.name}, has joined!` });
 
-   
 
-   io.to(user.room).emit('roomData', {
-     room: user.room, 
-     users: getUsersInRoom(user.room)
+
+    io.to(user.room).emit('roomData', {
+      room: user.room,
+      users: getUsersInRoom(user.room)
     }),
 
-   callback();
+      callback();
 
   });
 
@@ -75,34 +76,36 @@ io.on('connect', (socket) => {
   socket.on('disconnect', () => {
     const user = removeUser(socket.id);
     if (user) {
-      io.to(user.room).emit('message', 
-      { user:'Chat Bot', 
-      text: `${user.name} has left! ✌️`,
-    });
-      io.to(user.room).emit('roomData', {
-         room: user.room, 
-         users: getUsersInRoom(user.room),
+      io.to(user.room).emit('message',
+        {
+          user: 'Chat Bot',
+          text: `${user.name} has left! ✌️`,
         });
+      io.to(user.room).emit('roomData', {
+        room: user.room,
+        users: getUsersInRoom(user.room),
+      });
 
     }
   });
 
 });
 
-server.listen(PORT, () => 
- console.log(`Server is running on http://localhost:${PORT}`)
+
+
+
+app.use(function errorHandler(error, req, res, next) {
+  let response;
+  if (NODE_ENV === 'production') {
+    response = { error: { message: 'server error' } }
+  } else {
+    console.error(error);
+    response = { message: error.message, error };
+  }
+  res.status(500).json(response);
+})
+
+server.listen(PORT, () =>
+  console.log(`Server is running on http://localhost:${PORT}`)
 );
-
-
-    app.use(function errorHandler(error, req, res, next) {
-          let response;
-          if (NODE_ENV === 'production') {
-            response = { error: { message: 'server error' } }
-          } else {
-            console.error(error);
-            response = { message: error.message, error };
-          }
-          res.status(500).json(response);
-        })
-
 module.exports = app
