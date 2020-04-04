@@ -32,9 +32,13 @@ const NamesService = {
   },
 
   changePassword(knex, id, newpassword) {
+    console.log("NEWPASSWORD:", newpassword);
     return knex('usernames')
     .where({id})
-    .update(newpassword)
+    .update({
+      'name': newpassword.name,
+      'password': newpassword.password
+    })
   },
 
   validatePassword(password) {

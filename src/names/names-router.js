@@ -102,11 +102,12 @@ namesRouter
       .catch(next);
   })
   .patch(jsonBodyParser, (req,res, next) => {
-    const {name, password} = req.body
+    const { name, password} = req.body
     const newpassword = {name, password}
     const { name_id } = req.params;
     NamesService.changePassword(
       req.app.get('db'),
+      password,
       newpassword,
       name_id,
     )
