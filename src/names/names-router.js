@@ -73,13 +73,13 @@ namesRouter
   // console.log(name_id)
   // console.log('Hello')
   const { name } = req.body
-  NamesService.deleteName(
+  return NamesService.deleteName(
     req.app.get('db'),
     name
   )
     .then((numRowsAffected) => {
       logger.info(`Name with id ${name} deleted.`);
-      res.status(204).end();
+      return res.status(200).json({ message:'User deleted...'}).end()
     })
     .catch(next);
 })
