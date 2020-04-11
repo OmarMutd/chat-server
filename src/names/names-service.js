@@ -39,7 +39,7 @@ const NamesService = {
   },
 
   validatePassword(password) {
-    if (password.length <= 8) {
+    if (password.length < 8) {
       return 'Password must be 8 or more characters';
     }
     if (password.length > 72) {
