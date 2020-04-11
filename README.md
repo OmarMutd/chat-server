@@ -6,7 +6,7 @@ This is the backend for Cross Chat. It allows you to communicate with other user
 
 ## Scripts
 
-Start the application `npm start`. alternatively you can use `npm run dev`.
+Start the application `npm start`. Alternatively you can use `npm run dev`.
 
 Start nodemon for the application `npm run dev`
 
