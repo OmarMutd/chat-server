@@ -85,13 +85,13 @@ namesRouter
 .patch(jsonBodyParser, (req,res, next) => {
   const { name, password} = req.body
   const newpassword = password
-   NamesService.changePassword(
+   return NamesService.changePassword(
     req.app.get('db'),
     password,
     newpassword,
   )
   .then(() => {
-    return res.sendStatus(200).json({ message:'Password changed!'}).end()
+    return res.status(200).json({ message:'Password changed!'}).end()
   })
    .catch(next)
 });
