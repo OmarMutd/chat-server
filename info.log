@@ -20,3 +20,7 @@
 {"message":"Name with id User8 deleted.","level":"info"}
 {"message":"Name with id User8 deleted.","level":"info"}
 {"message":"Name with id User8 deleted.","level":"info"}
+{"message":"Name with id exampleuser deleted.","level":"info"}
+{"message":"exampleuser2 updated.","level":"info"}
+{"message":"exampleuser2 updated.","level":"info"}
+{"message":"Name with id exampleuser2 deleted.","level":"info"}

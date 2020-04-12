@@ -70,19 +70,47 @@ namesRouter
 })
 
 .delete((req, res, next) => {
-  // console.log(name_id)
-  // console.log('Hello')
   const { name } = req.body
   return NamesService.deleteName(
     req.app.get('db'),
     name
   )
-    .then((numRowsAffected) => {
+    .then(() => {
       logger.info(`Name with id ${name} deleted.`);
       return res.status(200).json({ message:'User deleted...'}).end()
     })
     .catch(next);
 })
+
+.patch(jsonBodyParser, (req,res, next) => {
+  const { name, password} = req.body
+  const newpassword = password
+   NamesService.changePassword(
+    req.app.get('db'),
+    password,
+    newpassword,
+  )
+  .then(() => {
+    return res.sendStatus(200).json({ message:'Password changed!'}).end()
+  })
+   .catch(next)
+});
+
+// .patch(jsonBodyParser, (req,res, next) => {
+//   const { name, password} = req.body
+//   const newname = name
+//   return NamesService.changeName(
+//     req.app.get('db'),
+//     name,
+//     newname,
+//   )
+//   .then(() => {
+//     logger.info(`${name} updated.`);
+//      res.sendStatus(200).json({ message:'Username changed!'}).end()
+//      return
+//   })
+//    .catch(next)
+// });
 
 namesRouter
   .route('/:name_id')
@@ -105,21 +133,6 @@ namesRouter
     res.json(serializeName(res.name));
     // res.json(serializeName(res.password))
   })
-  .patch(jsonBodyParser, (req,res, next) => {
-    const { name, password} = req.body
-    const newpassword = password
-    const { name_id } = req.params;
-    NamesService.changePassword(
-      req.app.get('db'),
-      password,
-      newpassword,
-      name_id,
-    )
-    .then(() => {
-      res.sendStatus(204)
-    })
-     .catch(next)
-});
 
   
   module.exports = namesRouter;
