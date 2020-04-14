@@ -8,7 +8,9 @@ const cors = require('cors');
 const helmet = require('helmet');
 const { NODE_ENV } = require('./config');
 const app = express();
+const authRouter = require('./auth/auth-router')
 const router = require('./router');
+
 const namesRouter = require('./names/names-router');
 const knex = require('knex');
 
@@ -37,6 +39,7 @@ app.use(cors());
 // app.use(router);  // server online router
 
 app.use('/api/names', namesRouter)
+app.use('/api/auth', authRouter)
 
 io.on('connect', (socket) => {
   socket.on('join', ({ name, room }, callback) => {
