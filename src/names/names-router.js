@@ -96,21 +96,6 @@ namesRouter
    .catch(next)
 });
 
-// .patch(jsonBodyParser, (req,res, next) => {
-//   const { name, password} = req.body
-//   const newname = name
-//   return NamesService.changeName(
-//     req.app.get('db'),
-//     name,
-//     newname,
-//   )
-//   .then(() => {
-//     logger.info(`${name} updated.`);
-//      res.sendStatus(200).json({ message:'Username changed!'}).end()
-//      return
-//   })
-//    .catch(next)
-// });
 
 namesRouter
   .route('/:name_id')
